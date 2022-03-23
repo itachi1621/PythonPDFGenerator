@@ -1,12 +1,10 @@
 from random import randint
 from random import seed
-from click import echo
 from fpdf import FPDF
-import lorem
+from lorem_text import lorem
 import os
 
-import string
- # Python program to create
+# Python program to create
 # a pdf file
 
 
@@ -14,43 +12,53 @@ seed(1)
 # save FPDF() class into a
 # variable pdf
 
-#print(output_file_count)
-name = input("Enter file name: ")
+# print(output_file_count)
+redo = True
 
-numberOfFiles = int(input("Enter number of files: "))
-file_count=0
-output_file_count = sum(len(files) for _, _, files in os.walk(r'output/'))
-isEmpty = True if (output_file_count == 0) else False
+while redo != False:
+    name = input("Enter file name: ")
 
-#if(isEmpty == False):
-   # os.remove("output/*.pdf")
+    numberOfFiles = int(input("Enter number of files to generate: "))
+    file_count = 0
+    output_exsists = False if(os.path.isdir("output") == False) else True
 
-for x in range(numberOfFiles):
-    try:
-        tempname=name
-        tempname += str(randint(1, 999999))
-        pdf = FPDF()
+    if(output_exsists == False):
+        os.mkdir("output")
 
-        # Add a page
-        pdf.add_page()
+    output_file_count = sum(len(files) for _, _, files in os.walk(r'output/'))
+    isEmpty = True if (output_file_count == 0) else False
 
-        # set style and size of font
-        # that you want in the pdf
-        pdf.set_font("Arial", size=15)
+    # if(isEmpty == False):
+    # os.remove("output/*.pdf")
 
-        # create a cell
-        pdf.cell(200, 10, txt = "Sample Text",
-                ln = 1, align = 'C')
+    for x in range(numberOfFiles):
+        try:
+            tempname = name
+            tempname += str(randint(1, 999999))
+            pdf = FPDF()
 
-        # add another cell
-        pdf.cell(200, 10, txt = lorem.paragraph(),
-                ln = 2, align = 'C')
+            # Add a page
+            pdf.add_page()
 
-        # save the pdf with name .pdf
-        pdf.output("output/"+tempname+".pdf")
-    except BaseException as e:
-        print(str(e))
-        print("Error in pdf generation")
-    else:
-        file_count+=1
-        print(str(file_count)+" of "+str(numberOfFiles)+" created")
+            # set style and size of font
+            # that you want in the pdf
+            pdf.set_font("Arial", size=15)
+
+            # create a cell
+            pdf.cell(200, 10, txt="Sample Text",
+                     ln=1, align='C')
+
+            # add another cell
+            pdf.multi_cell(200, 10, txt=lorem.paragraphs(11))
+
+            # save the pdf with name .pdf
+            pdf.output("output/"+tempname+"_CONF"+".pdf")
+        except BaseException as e:
+            print(str(e))
+            print("Error in pdf generation")
+        else:
+            file_count += 1
+            print(str(file_count)+" of "+str(numberOfFiles)+" created")
+    choice = input("Create more files? (y/n): ")
+    if(choice == "n" or choice == "N"):
+        redo = False
